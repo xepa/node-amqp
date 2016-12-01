@@ -48,6 +48,11 @@ var amqp = require('amqp');
 
 var connection = amqp.createConnection({ host: 'dev.rabbitmq.com' });
 
+// add this for better debuging
+connection.on('error', function(e) {
+  console.log("Error from amqp: ", e);
+});
+
 // Wait for connection to become established.
 connection.on('ready', function () {
   // Use the default 'amq.topic' exchange
@@ -386,7 +391,7 @@ This method unbinds a queue from an exchange.
 
 If the exchange argument is left out `'amq.topic'` will be used.
 
-Ths method will emit `'queueUnbindOk'` when complete.
+This method will emit `'queueUnbindOk'` when complete.
 
 
 ### queue.bind_headers([exchange,] routing)
@@ -470,6 +475,7 @@ object for the second. The options are
     If set, the exchange will be in confirm mode, and you will get a 
     'ack'|'error' event emitted on a publish, or the callback on the publish
     will be called.
+- `arguments`: a map of additional arguments to pass in when creating an exchange.
 
 An exchange will emit the `'open'` event when it is finally declared.
 
@@ -499,7 +505,7 @@ is converted to JSON.
 - `headers`: default `{}`. Arbitrary application-specific message headers.
 - `deliveryMode`: Non-persistent (1) or persistent (2)
 - `priority`: The message priority, 0 to 9.
-- `correlationId`: default null. Application correlation identifier
+- `correlationId`: string, default null. Application correlation identifier
 - `replyTo`: Usually used to name a reply queue for a request message.
 - `expiration`: default null. Message expiration specification
 - `messageId`: default null. Application message identifier
